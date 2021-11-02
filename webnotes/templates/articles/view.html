@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}Статья{% endblock %}
+
+{% block sidebar %}
+	{% for category in categories %}
+		<a href="{% url 'newnotes:view_category' category.id%}">{{category.name}}</a>
+	{% endfor %}
+{% endblock %}
+{% block content %}
+	<h3 align="center">{{article.title}}</h3>
+	<p align="center"><em>{{article.article}}, {{article.date}}, прочитана:{{watched}}</em></p><br>
+	<p align="justify">{{article.text|linebreaksbr}}</p>
+	<hr/>
+	<form class="comment" action="{% url 'newnotes:leave_comment' article.id %}" method="post">
+		{% csrf_token %}
+		<textarea name="text" required="" placeholder="Текст комментария..." cols="70" rows="3"></textarea><br>
+		<input type="submit" value="Оставить комментарий"><br>
+    </form>
+    <h3>Комментарии:</h3>
+    {% include 'articles/comms.html' %}
+{% endblock %}
+{% block scripts %}
+		{% csrf_token %}
+		{% load static %}
+		<script src="{% static 'main/js/index.js' %}"></script>
+
+{% endblock %}

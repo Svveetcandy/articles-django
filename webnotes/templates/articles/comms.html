@@ -1,0 +1,11 @@
+<div id="comms_list">
+    <div class="pagination">
+        {% load bootstrap_pagination from bootstrap3 %}
+            {% for comment in list_comments %}
+                <br/>
+                <p><strong>{{comment.author}}</strong>, <em>{{comment.date}}</em></p>
+                <p>{{comment.text}}</p>
+            {% endfor %}
+        {% bootstrap_pagination list_comments pages_to_show="3" %}
+    </div>
+</div>

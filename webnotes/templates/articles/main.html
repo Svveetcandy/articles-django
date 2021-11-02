@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}Oh, notes!{% endblock %}
+
+{% block sidebar %}
+	{% for category in categories %}
+		<a href="{% url 'newnotes:view_category' category.id%}">{{category.name}}</a>
+	{% endfor %}
+{% endblock %}
+{% block content %}
+	<h3>Последние статьи сайта:</h3>
+	{% for article in all_articles %}
+		<div class="item">
+			<div class="item-base">
+				<a href="{% url 'newnotes:view_article' article.id %}">
+				<div>
+					<h4>{{article.title|truncatechars:255}}</h4>
+					<p><strong>{{article.date}}, {{article.article.username}}</strong></p>
+					<p>{{article.text|truncatechars:255}}</p>
+				</div>
+			</a>
+			</div>
+		</div>
+	{% endfor %}
+{% endblock %}

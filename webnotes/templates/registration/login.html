@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+
+{% if form.errors %}
+	<p>Имя пользовотеля или пароль не совпадают</p>
+{% endif %}
+<h3>Вход</h3>
+<form method="post" action="{% url 'login' %}">
+	{% csrf_token %}
+	<table>
+		<tr>
+			<td>{{ form.username.label_tag }}</td>
+			<td>{{ form.username }}</td>
+		</tr>
+		<tr>
+			<td><br></td>
+			<td></td>
+		</tr>
+		<tr>
+			<td>{{ form.password.label_tag }}</td>
+			<td>{{ form.password }}</td>
+		</tr>
+	</table>
+	<input type="submit" value="Войти">
+</form>
+
+<p><a href="{% url 'password_reset' %}">Забыли пароль?</a></p>
+
+{% endblock %}

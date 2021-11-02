@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block title %}Статьи{% endblock %}
+
+{% block sidebar %}
+	{% for category in categories %}
+		<div class="item-sidebar">
+			<a href="{% url 'newnotes:view_category' category.id%}">{{category.name}}</a>
+		</div>
+	{% endfor %}
+	{% if is_admin%}
+		<a href = "{% url 'newnotes:create_category' %}" align="center"><i class="fas fa-plus-circle"></i></a><br>
+	{% endif %}
+{% endblock %}
+{% block content %}
+	<h3>Статьи сайта:</h3>
+	<div>
+		<ul class="all-functions">
+			<li>
+				{% if is_admin%}
+					<a class="function" href = "{% url 'newnotes:create_article' %}">Создать новую статью</a><br>
+				{% endif %}
+			</li>
+		</ul>
+	</div>
+    <div id=search-box>
+    	<input id="search" class="search-input" placeholder="Title...">
+    	<div id="box">
+    	</div>
+    </div>
+	{% for article in all_articles %}
+	<div class="item">
+		<div class="item-base">
+			<a href="{% url 'newnotes:view_article' article.id %}">
+			<div>
+				<h4>{{article.title|truncatechars:255}}</h4>
+				<p><strong>{{article.date}}, {{article.article.username}}</strong></p>
+				<p>{{article.text|truncatechars:255}}</p>
+			</div>
+		</a>
+		</div>
+		<div class="item-remain">
+			{% if is_admin %}
+				<div  class="delete-article">
+					<a href="{% url 'newnotes:delete_article' article.id%}"><i class="fas fa-trash-alt"></i></a>
+				</div>
+			{% endif %}
+		</div>
+	</div>
+	{% endfor %}
+	{% load bootstrap3 %}
+	{% bootstrap_pagination all_articles %}
+{% endblock %}
+
+{% block scripts %}
+<link rel="stylesheet" href="https://unpkg.com/@trevoreyre/autocomplete-js/dist/style.css"/>
+<script type="text/javascript">
+	const data = "{{qs_json}}"
+	const rdata = JSON.parse(data.replace(/&quot;/g, '"'))
+
+	const input = document.getElementById('search')
+
+	let filteredArr = []
+
+	input.addEventListener('keyup', (e)=>{
+		box.innerHTML = ""
+		if(e.target.value!=""){
+			filteredArr = rdata.filter(article => article[1].includes(e.target.value))
+
+			if(filteredArr.length>0){
+				filteredArr.map(article=>{
+					box.innerHTML += `<a class="box-item" href="/articles/${article[0]}/">${article[1]}</a>`
+				})
+			} else{
+				box.innerHTML = `<p class="box-item">Не найдено результатов...</p>`
+			}
+		}
+
+	})
+</script>
+{% endblock %}
