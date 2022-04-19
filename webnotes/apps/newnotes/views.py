@@ -163,6 +163,9 @@ def get_paginated_page(request, objects, number=items_on_page):
     except EmptyPage:
         return current_page.page(current_page.num_pages)
 
+def is_ajax(request):
+    return request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'
+
 class ViewArticle(View):
 	template_name = 'articles/view.html'
 
@@ -179,7 +182,7 @@ class ViewArticle(View):
 		return render(request, self.template_name, {'article':article, 'list_comments': get_paginated_page(request, list_comments), 'watched':watched, 'categories':categories,})
 
 	def post(self, request, article_id):
-		if request.is_ajax():
+		if is_ajax(request):
 			try:
 				article = Article.objects.get(id=article_id)
 			except:
