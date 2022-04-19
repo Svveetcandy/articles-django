@@ -1,5 +1,6 @@
 # articles-django
-Web-project written with help of django.
+A simple web-app written with help of django.
+Deployed on heroku: https://artilces-sinkel.herokuapp.com/
 
 Guest user available actions:
  * View article
