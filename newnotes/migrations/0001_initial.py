@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
             name='Article',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=100, verbose_name='тема')),
+                ('title', models.CharField(max_length=250, verbose_name='тема')),
                 ('text', models.TextField(verbose_name='текст')),
                 ('date', models.DateTimeField(verbose_name='дата')),
                 ('article', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
@@ -32,15 +32,32 @@ class Migration(migrations.Migration):
                 ('text', models.CharField(max_length=500, verbose_name='текст')),
                 ('date', models.DateTimeField(verbose_name='дата')),
                 ('comment', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='newnotes.article')),
+
             ],
         ),
         migrations.CreateModel(
-            name='BookUserRelation',
+            name='ArticleUserRelation',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('is_watched', models.BooleanField(default=False)),
                 ('article', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='newnotes.article')),
                 ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='Category',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('name', models.CharField(max_length=50, verbose_name='название')),
+                ('includes_article', models.ManyToManyField(through='newnotes.ArticleCategoryRelation', to='newnotes.Article')),
+            ],
+        ),
+        migrations.CreateModel(
+            name='ArticleCategoryRelation',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('article', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='newnotes.article')),
+                ('category', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='newnotes.category')),
             ],
         ),
         migrations.AddField(

@@ -33,7 +33,6 @@ ALLOWED_HOSTS = ['artilces-sinkel.herokuapp.com', '127.0.0.1', 'localhost']
 # Application definition
 
 INSTALLED_APPS = [
-    'newnotes.apps.NewnotesConfig',
     'bootstrap3',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -41,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'newnotes.apps.NewnotesConfig',
 ]
 
 MIDDLEWARE = [
