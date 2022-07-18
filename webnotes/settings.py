@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
-
+from os import environ
 from pathlib import Path
 import sys
 
@@ -23,12 +23,13 @@ sys.path.append(str(PROJECT_ROOT))
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-6mpo1e2bgerwr*3c8z^y$@4k&7^8o#hgbm=3o%thu+!0gopa(-'
+SECRET_KEY = environ.get('SECRET_KEY', 'secret_key')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = environ.get('DEBUG', True),
 
-ALLOWED_HOSTS = ['artilces-sinkel.herokuapp.com', '127.0.0.1', 'localhost']
+ALLOWED_HOSTS = environ.get('DJANGO_ALLOWED_HOSTS',
+                            'artilces-sinkel.herokuapp.com 127.0.0.1 localhost').split(' ')
 
 # Application definition
 
@@ -80,9 +81,17 @@ WSGI_APPLICATION = 'webnotes.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'db.sqlite3',
+    # }
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': environ.get('POSTGRES_NAME', 'webnotes_db'),
+        'USER': environ.get('POSTGRES_USER', 'postgres'),
+        'PASSWORD': environ.get('POSTGRES_PASSWORD', 'admin'),
+        'HOST': environ.get('POSTGRES_HOST', 'localhost'),
+        'PORT': environ.get('POSTGRES_PORT', '5432'),
     }
 }
 

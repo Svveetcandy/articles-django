@@ -1,0 +1,48 @@
+
+version: '3'
+volumes:
+    pgdata:
+        driver: local
+services:
+    nginx:
+#        restart: always
+        image: nginx:latest
+        ports:
+          - 1337:80
+        volumes:
+            - ./webnotes/static:/src/articles/static
+            - .:/etc/nginx/conf.d
+            - ./webnotes/media:/src/articles/media
+            - ./webnotes/logs:/src/articles/logs
+        depends_on:
+            - web
+    web:
+#        restart: always
+        build:
+            context: .
+            dockerfile: Dockerfile
+        volumes:
+            - .:/src/articles
+            - ./webnotes/static:/src/articles/static
+            - ./webnotes/static:/src/articles/webnotes/static
+        expose:
+          - 8000
+        ports:
+            - 8000:8000
+        depends_on:
+            - db
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: admin
+            POSTGRES_DB: webnotes_db
+            POSTGRES_HOST: db
+            POSTGRES_PORT: 5432
+        command: "gunicorn -c gunicorn.py webnotes.wsgi"
+    db:
+        image: postgres:9.3.22
+        ports:
+            - 5432:5432
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: admin
+            POSTGRES_DB: webnotes_db

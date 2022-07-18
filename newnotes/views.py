@@ -24,7 +24,6 @@ class ArticleListView(ListView):
 
     def get(self, request, **kwargs):
         user = request.user
-        is_admin = False
         if user.groups.filter(name='admin').count():
             is_admin = True
         article_list = Article.objects.all()
@@ -38,11 +37,11 @@ class ArticleListView(ListView):
         data = json.dumps(list(Article.objects.values_list('id', 'title')))
         categories = Category.objects.all()
         return render(request, 'articles/list.html',
-                      {'all_articles': page_articles, 'is_admin': is_admin, 'qs_json': data, 'categories': categories, })
+                      {'all_articles': page_articles, 'is_admin': request.user.is_staff, 'qs_json': data, 'categories': categories, })
 
 
 def create_article(request):
-    if not request.user.groups.filter(name='admin').count():
+    if not request.user.is_staff:
         raise Http404('Доступ запрещен!')
 
     if request.method == 'POST':
@@ -91,7 +90,7 @@ def register(request):
 
 
 def delete_article(request, article_id):
-    if not request.user.groups.filter(name='admin').count():
+    if not request.user.is_staff:
         raise Http404('Доступ запрещен!')
     try:
         article = Article.objects.get(id=article_id)
@@ -104,7 +103,7 @@ def delete_article(request, article_id):
 
 
 def create_category(request):
-    if not request.user.groups.filter(name='admin').count():
+    if not request.user.is_staff:
         raise Http404('Доступ запрещен!')
     if request.method == 'POST':
         Category.objects.create(name=request.POST['name'])
@@ -114,7 +113,7 @@ def create_category(request):
 
 
 def delete_category(request, category_id):
-    if not request.user.groups.filter(name='admin').count():
+    if not request.user.is_staff:
         raise Http404('Доступ запрещен!')
     try:
         category = Category.objects.get(id=category_id)
@@ -128,7 +127,7 @@ def delete_category(request, category_id):
 
 
 def update_category(request, category_id):
-    if not request.user.groups.filter(name='admin').count():
+    if not request.user.is_staff:
         raise Http404('Доступ запрещен!')
     try:
         category = Category.objects.get(id=category_id)
@@ -145,9 +144,6 @@ def update_category(request, category_id):
 class ListCategoryArticles(ListView):
 
     def get(self, request, category_id, **kwargs):
-        is_admin = False
-        if request.user.groups.filter(name='admin').count():
-            is_admin = True
         rel_category_article = ArticleCategoryRelation.objects.filter(category=category_id).order_by('-id')
         category = Category.objects.all().get(id=category_id)
         article_list = [Article.objects.get(id=x.article.id) for x in rel_category_article]
@@ -161,7 +157,7 @@ class ListCategoryArticles(ListView):
         data = json.dumps(list(Article.objects.values_list('id', 'title')))
         categories = Category.objects.all()
         return render(request, 'categories/list.html',
-                      {'all_articles': context, 'is_admin': is_admin, 'qs_json': data, 'categories': categories,
+                      {'all_articles': context, 'is_admin': request.user.is_staff, 'qs_json': data, 'categories': categories,
                        'category': category, })
 
 
@@ -188,7 +184,7 @@ class ViewArticle(View):
         except:
             raise Http404('Статья не найдена!')
         list_comments = article.comment_set.order_by('-id')
-        if str(request.user) != 'AnonymousUser':
+        if not request.user.is_anonymous:
             article.readers.add(request.user)
         watched = article.readers.count()
         categories = Category.objects.all()
