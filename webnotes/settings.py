@@ -29,7 +29,7 @@ SECRET_KEY = environ.get('SECRET_KEY', 'secret_key')
 DEBUG = environ.get('DEBUG', True),
 
 ALLOWED_HOSTS = environ.get('DJANGO_ALLOWED_HOSTS',
-                            'articlesartilces-sinkel.herokuapp.com 127.0.0.1 localhost').split(' ')
+                            '127.0.0.1 localhost 192.168.1.115 artilces-sinkel.herokuapp.com').split(' ')
 
 # Application definition
 

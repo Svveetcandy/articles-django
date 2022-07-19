@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}Изменить статью{% endblock %}
+
+{% block sidebar %}
+	{% for category in categories %}
+		<a href="{% url 'newnotes:view_category' category.id%}">{{category.name}}</a>
+	{% endfor %}
+{% endblock %}
+{% block content %}
+<div class="form">
+	<h1>Форма новой статьи</h1>
+	<form method="POST">
+		{% csrf_token %}
+		<h4>Название</h4>
+		<input type="text" name="title" value="{{article.title}}" placeholder="Название статьи..."><br/>
+		<h4>Текст</h4>
+		<textarea placeholder="Текст статьи..." name="text">{{article.text}}</textarea><br/>
+		<p>Автор: {{article.article.username}}</p>
+		<input type="submit" value="Изменить статью">
+	</form>
+</div>
+{% endblock %}

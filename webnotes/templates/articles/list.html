@@ -8,7 +8,7 @@
 			<a href="{% url 'newnotes:view_category' category.id%}">{{category.name}}</a>
 		</div>
 	{% endfor %}
-	{% if is_admin%}
+	{% if is_admin %}
 		<a href = "{% url 'newnotes:create_category' %}" align="center"><i class="fas fa-plus-circle"></i></a><br>
 	{% endif %}
 {% endblock %}
@@ -41,9 +41,12 @@
 		</div>
 		<div class="item-remain">
 			{% if is_admin %}
-				<div  class="delete-article">
-					<a href="{% url 'newnotes:delete_article' article.id%}"><i class="fas fa-trash-alt"></i></a>
-				</div>
+			<div class="article-tools">
+				<a href="{% url 'newnotes:delete_article' article.id%}"><i class="fas fa-trash-alt"></i></a>
+			</div>
+			<div class="article-tools">
+				<a href="{% url 'newnotes:update_article' article.id%}"><i class="fas fa-pen-alt"></i></a>
+			</div>
 			{% endif %}
 		</div>
 	</div>

@@ -17,7 +17,9 @@ items_on_page = 3
 def index(request):
     article_list = Article.objects.all()[:items_on_page]
     categories = Category.objects.all()
-    return render(request, 'articles/main.html', {'all_articles': article_list, 'categories': categories, })
+    return render(request, 'articles/main.html', {'all_articles': article_list,
+                                                  'categories': categories,
+                                                  'is_admin': request.user.is_staff, })
 
 
 class ArticleListView(ListView):
@@ -37,7 +39,8 @@ class ArticleListView(ListView):
         data = json.dumps(list(Article.objects.values_list('id', 'title')))
         categories = Category.objects.all()
         return render(request, 'articles/list.html',
-                      {'all_articles': page_articles, 'is_admin': request.user.is_staff, 'qs_json': data, 'categories': categories, })
+                      {'all_articles': page_articles, 'is_admin': request.user.is_staff, 'qs_json': data,
+                       'categories': categories, })
 
 
 def create_article(request):
@@ -57,6 +60,40 @@ def create_article(request):
         return redirect('/')
     category_list = Category.objects.all()
     return render(request, 'articles/create.html', {'category_list': category_list})
+
+
+def update_article(request, article_id):
+    if not request.user.is_staff:
+        raise Http404('Доступ запрещен!')
+
+    current_article = Article.objects.get(id=article_id)
+    if not current_article:
+        raise Http404('Статья не найдена!')
+
+    if request.method == 'POST':
+
+        # try:
+        #     category_choices = [x for x in request.POST.getlist('category')]
+        #     category_list = [Category.objects.get(id=category_id) for category_id in category_choices]
+        # except:
+        #     raise Http404('Категория не найдена!')
+
+        current_article.title=request.POST['title']
+        current_article.text=request.POST['text']
+        current_article.save()
+        # ArticleCategoryRelation.objects.filter(article=current_article).delete()
+        #
+        # for category in category_list:
+        #     category.includes_article.add(current_article)
+
+        return redirect('/')
+
+    category_list = Category.objects.all()
+    category_of_article = ArticleCategoryRelation.objects.filter(article=current_article)
+
+    return render(request, 'articles/update.html', {'category_list': category_list,
+                                                    'article': current_article,
+                                                    'article_category': category_of_article})
 
 
 def leave_comment(request, article_id):
@@ -157,7 +194,8 @@ class ListCategoryArticles(ListView):
         data = json.dumps(list(Article.objects.values_list('id', 'title')))
         categories = Category.objects.all()
         return render(request, 'categories/list.html',
-                      {'all_articles': context, 'is_admin': request.user.is_staff, 'qs_json': data, 'categories': categories,
+                      {'all_articles': context, 'is_admin': request.user.is_staff, 'qs_json': data,
+                       'categories': categories,
                        'category': category, })
 
 

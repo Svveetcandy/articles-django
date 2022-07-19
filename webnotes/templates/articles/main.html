@@ -1,14 +1,29 @@
 {% extends 'base.html' %}
 
-{% block title %}Oh, notes!{% endblock %}
+{% block title %}Oh, articles!{% endblock %}
 
 {% block sidebar %}
 	{% for category in categories %}
-		<a href="{% url 'newnotes:view_category' category.id%}">{{category.name}}</a>
+		<div class="item-sidebar">
+			<a href="{% url 'newnotes:view_category' category.id%}">{{category.name}}</a>
+		</div>
 	{% endfor %}
+	{% if is_admin%}
+		<a href = "{% url 'newnotes:create_category' %}" align="center"><i class="fas fa-plus-circle"></i></a><br>
+	{% endif %}
 {% endblock %}
+
 {% block content %}
 	<h3>Последние статьи сайта:</h3>
+	<div>
+		<ul class="all-functions">
+			<li>
+				{% if is_admin%}
+				<a class="function" href = "{% url 'newnotes:create_article' %}">Создать новую статью</a>
+				{% endif %}
+			</li>
+		</ul>
+	</div>
 	{% for article in all_articles %}
 		<div class="item">
 			<div class="item-base">
@@ -19,6 +34,16 @@
 					<p>{{article.text|truncatechars:255}}</p>
 				</div>
 			</a>
+			</div>
+			<div class="item-remain">
+				{% if is_admin %}
+				<div class="article-tools">
+					<a href="{% url 'newnotes:delete_article' article.id%}"><i class="fas fa-trash-alt"></i></a>
+				</div>
+				<div class="article-tools">
+					<a href="{% url 'newnotes:update_article' article.id%}"><i class="fas fa-pen-alt"></i></a>
+				</div>
+				{% endif %}
 			</div>
 		</div>
 	{% endfor %}
